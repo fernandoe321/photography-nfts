@@ -1,6 +1,5 @@
 #!/usr/bin/python
 from brownie import PhotographyNFT, accounts, config, network
-from scripts.util import OPENSEA_FORMAT
 from metadata import sample_metadata
 from pathlib import Path
 from dotenv import load_dotenv
@@ -59,30 +58,22 @@ def upload_to_pinata(filepath):
         print(file_uri) 
     return file_uri
 
+def set_tokenURI(token_id, contract, tokenURI):
+    account = accounts.add(config["wallets"]["from_key"])
+    transaction = contract.setTokenURI(token_id, tokenURI, {"from": account})
+    transaction.wait(1)
+    return
+
 def main():
     print("Working on " + network.show_active())
-    account = accounts.add(config["wallets"]["from_key"])
     contract = PhotographyNFT[-1]
-    num_of_tokens = contract.currentTokenId()
 
     # CREATE METADATA
-    print(
-        "The number of tokens you've deployed is: "
-        + str(num_of_tokens)
-    )
-    token_id = num_of_tokens + 1
+    token_id = int(input("Enter token id you would like to change the token URI for: "))
+    print("Creating new metadata for tokenId #{}".format(token_id))
     token_uri = write_metadata(token_id)
 
-    # CREATE NFT TOKEN
-    with open("./nft_info.yaml", "rb") as nft_info:
-        info = yaml.safe_load(nft_info)
-    nft_name = info["name"]
-    transaction = contract.createCollectible(nft_name, token_uri, {"from": account})
-    transaction.wait(1)
-    print("New PhotographyNFT tokenId is {} with name {}".format(token_id, nft_name))
-    print(
-        "Done! You can view your NFT at {}".format(
-            OPENSEA_FORMAT.format(contract.address, token_id)
-        )
-    )
-    print('Give up to 20 minutes, and hit the "refresh metadata" button')
+    # SET TOKEN URI
+    set_tokenURI(token_id, contract, token_uri)
+    print("You've successfully changed the URI of token #{} to: {}".format(token_id, token_uri))
+    
