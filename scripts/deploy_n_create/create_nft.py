@@ -19,8 +19,11 @@ def write_metadata(token_id):
         nft_metadata = yaml.safe_load(nft_info)
     name = nft_metadata["name"]
     photo_metadata = sample_metadata.metadata_template
+    network_dir = "./metadata/{}/".format(network.show_active())
+    if not Path(network_dir).exists():
+        os.mkdir(network_dir)
     metadata_file_name = (
-        "./metadata/{}/".format(network.show_active())
+        network_dir
         + name
         + "-"
         + str(token_id)
