@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract PhotographyNFT is ERC721URIStorage, Ownable {
-
     using Counters for Counters.Counter;
 
     Counters.Counter public currentTokenId;
@@ -16,7 +15,10 @@ contract PhotographyNFT is ERC721URIStorage, Ownable {
     constructor() public ERC721("FCPhotographyNFT", "FCP") {
     }
 
-    function createCollectible(string memory name, string memory tokenURI) public onlyOwner {
+    function createCollectible(
+        string memory name, 
+        string memory tokenURI
+    ) public onlyOwner {
         address photoOwner = msg.sender;
         currentTokenId.increment();
         uint256 newItemId = currentTokenId.current();
@@ -26,8 +28,10 @@ contract PhotographyNFT is ERC721URIStorage, Ownable {
         emit CreatedPhotographyNFT(newItemId);
     }
 
-    function setTokenURI(uint256 tokenId, string memory _tokenURI) public onlyOwner {
+    function setTokenURI(
+        uint256 tokenId, 
+        string memory _tokenURI
+    ) public onlyOwner {
         _setTokenURI(tokenId, _tokenURI);
     }
-
 }
